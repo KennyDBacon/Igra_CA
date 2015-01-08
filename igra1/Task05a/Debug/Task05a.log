@@ -1,0 +1,30 @@
+﻿Build started 1/3/2015 5:06:37 PM.
+     1>Project "D:\School\igra1\Task05a\Task05a.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Task5a.cpp
+         Task5a.cpp
+     1>d:\school\igra1\task05a\task5a.cpp(320): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(329): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(338): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(350): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(358): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(366): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(374): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(382): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(390): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(398): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(406): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(414): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(422): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\school\igra1\task05a\task5a.cpp(447): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\school\igra1\task05a\task5a.cpp(471): warning C4305: 'argument' : truncation from 'double' to 'float'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\School\igra1\Debug\Task05a.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\School\igra1\Debug\Task05a.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\School\igra1\Debug\Task05a.lib" /MACHINE:X86 Debug\Task5a.obj
+         D:\School\igra1\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.lib
+         D:\School\igra1\Debug\igra1.lib
+         Task05a.vcxproj -> D:\School\igra1\Debug\Task05a.exe
+     1>Done Building Project "D:\School\igra1\Task05a\Task05a.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.60
