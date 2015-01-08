@@ -1,0 +1,14 @@
+^..\Task04\Shaders\PS_Coloured.hlsl
+^..\Task04\Shaders\VS_Coloured.hlsl
+^..\Task04\Shaders\VS_Coloured3D.hlsl
+^PS_DirLight.hlsl
+^PS_DummyLight.hlsl
+^PS_unlit.hlsl
+^VS_default.hlsl
+D:\School\igra1\Content\Shaders\PS_Coloured.cso
+D:\School\igra1\Content\Shaders\VS_Coloured.cso
+D:\School\igra1\Content\Shaders\VS_Coloured3D.cso
+D:\School\igra1\Content\Shaders\PS_DirLight.cso
+D:\School\igra1\Content\Shaders\PS_DummyLight.cso
+D:\School\igra1\Content\Shaders\PS_unlit.cso
+D:\School\igra1\Content\Shaders\VS_default.cso
