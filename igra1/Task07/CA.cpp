@@ -44,6 +44,8 @@ class MyApp:public App
 
 	void PlayScene();
 
+	void PlayerMovement();
+
 	void SetupPointLights(ShaderManager::cbLights &lights);
 
 	// shader manager: handles VS,PS, layouts & constant buffers
@@ -62,8 +64,7 @@ class MyApp:public App
 	void FireShot();
 	void CheckCollisions();
 
-	bool mNodeCamera;
-	
+	bool mFreeCamera, zoom, angle;
 	CameraNode mCamera;
 
 	float speed;
@@ -76,7 +77,7 @@ class MyApp:public App
 	bool sClump; // Crates clump together
 	bool sExplode; // Crates pushed away from center
 
-	float rotateTimer, rotateRadius, rotateHeight, rotateAngle;
+	float rotateRadius, rotateSpeed, rotateAngle;
 
 	// DEBUG
 	std::wstring radiusStr, timerStr;
@@ -138,7 +139,7 @@ void MyApp::Startup()
 	//mCamera.Reset();
 	
 	mpSpriteBatch.reset(new SpriteBatch(GetContext()));
-	mpSpriteFont.reset(new SpriteFont(GetDevice(), L"../Content/Times12.sprfont"));
+	mpSpriteFont.reset(new SpriteFont(GetDevice(), L"../Content/Times16.sprfont"));
 
 	mpDraw3D.reset(new PrimitiveBatch<ColouredVertex>(GetContext()));
 
@@ -152,15 +153,14 @@ void MyApp::Startup()
 	
 	mTestCrate.Init(&mBox,Vector3(0,0.5,0));
 
-	//float boxL = cos(XMConvertToRadians(45));
 	float boxPosX = 0.5;
 	float boxPosZ = 0.5;
-	//float boxAngle = 45;
-	//float boxPosIn = 1;
+	float boxRot = -270;
+	float boxInc = 1;
 	int boxNum = 4;
 	for(int i = 0;i < boxNum;i++)
 	{
-		
+		/*
 		DrawableNode* ptr = new DrawableNode();
 		ptr->Init(&mBox);
 		ptr->mPos.x=boxPosX;
@@ -174,37 +174,25 @@ void MyApp::Startup()
 		{
 			boxPosX = 0.5;
 			boxPosZ = -0.5;
-		}
+		}*/
 
-		/*
 		DrawableNode* ptr = new DrawableNode();
 		ptr->Init(&mBox);
 		ptr->mPos.x=boxPosX;
-		ptr->mPos.y=0.5f;
+		ptr->mPos.y= 0.5f;
 		ptr->mPos.z=boxPosZ;
-		ptr->mHpr.x=XMConvertToRadians(boxAngle);
+		ptr->mHpr.x=i*XMConvertToRadians(-90);
 		mCrates.push_back(ptr);
 
-		boxPosX = 0;
-		boxPosZ = boxL * boxPosIn;
-		boxAngle -= 90;
+		boxPosX = -0.5 * boxInc;
 
 		if(i == (boxNum-1) / 2)
 		{
-			boxPosX = -boxL;
-			boxPosZ = 0;
-			boxPosIn = -1;
-		}*/
+			boxPosX = -0.5;
+			boxPosZ = -0.5;
+			boxInc = -1;
+		}
 	}
-
-	/*
-	for(int i = 0;i<10;i++)
-	{
-		Bullet* ptr = new Bullet();
-		ptr->Init(&mYellowBallObj);
-		ptr->Kill();
-		mBullets.push_back(ptr);
-	}*/
 
 	speed = 5.0f;
 
@@ -215,23 +203,22 @@ void MyApp::Startup()
 	sClump = false;
 	sExplode = false;
 
-	rotateTimer = 0;
-	rotateRadius = 0.5f;
-	rotateHeight = 0.1f;
-	rotateAngle = 45;
+	rotateRadius = 2;
+	rotateSpeed = 0;
+	rotateAngle = 0;
 
 	radiusStr = ToString("Radius: ", rotateRadius);
 	timerC = 0;
 	timerStr = ToString("Timer: ", timerC);
 
-	mNodeCamera = false;
+	zoom = 5;
+	angle = 0;
+	mFreeCamera = true;
 	mCamera.Init(Vector3(0,2,-10));
 	mCamera.LookAt(Vector3(0,0,0));
 	mCamera.SetNearFar(0.05f,100.0f);
-	mCamera.mPos= Vector3(0,2,-10);
-	mCamera.mHpr=Vector3(0,XMConvertToRadians(90),0);
-	//mAxis.mScale=3;
-	//mAxis.mHpr.x=XMConvertToRadians(45);
+	mCamera.mPos= Vector3(0,5,-10);
+	//mCamera.mHpr=Vector3(0,XMConvertToRadians(90),0);
 }
 
 void MyApp::SetupPointLights(ShaderManager::cbLights &lights)
@@ -269,33 +256,18 @@ void MyApp::Draw()
                                     Vector3(0,1,0));
 	Matrix proj=XMMatrixPerspectiveFovLH(XM_PI/4,GetAspectRatio(),1,1000);
 
-	if(mNodeCamera)
+	if(mFreeCamera)
 	{
 		view = mCamera.GetViewMatrix();
 		proj = mCamera.GetProjectionMatrix();
 	}
-	/*
-	// teapot
-	world=Matrix::CreateTranslation(2,1,0);
-	mTeapot.mMaterial.FillMatrixes(world,view,proj);
-	mTeapot.mMaterial.Apply(GetContext());
-	mTeapot.Draw(GetContext());
-
-	world = Matrix::CreateTranslation(0,0,0);
-	mPlane.mMaterial.FillMatrixes(world,view,proj);
-	mPlane.mMaterial.Apply(GetContext());
-	mPlane.Draw(GetContext());
-
-	Draw3DPrepare(GetContext(),mpShaderManager.get(),view,proj);
-
-	*/
 
 	mGround.Draw(GetContext(),view,proj);
 	//mTestCrate.Draw(GetContext(),view,proj);
 	DrawAliveNodes(mCrates,GetContext(),view,proj);
 
 	mpSpriteBatch->Begin();
-	radiusStr = ToString("Radius: ", mCrates[0]->mPos.y);
+	radiusStr = ToString("Crate 3 X: ", mCrates[3]->mPos.x);
 	timerStr = ToString("Timer: ", timerC);
 	mpSpriteFont->DrawString(mpSpriteBatch.get(), radiusStr.c_str(), Vector2(20,20), Colors::Black);
 	mpSpriteFont->DrawString(mpSpriteBatch.get(), timerStr.c_str(), Vector2(20,40), Colors::Black);
@@ -332,24 +304,26 @@ void MyApp::Update()
 
 	if(Input::KeyPress(VK_F1))
 	{
-		mNodeCamera = !mNodeCamera;
+		mFreeCamera = !mFreeCamera;
 	}
-
-	const float MOVE_SPEED = 5,TURN_SPEED=XMConvertToRadians(90),SPIN_SPEED = XMConvertToRadians(60);
-
-	/*
-	for(unsigned i = 0;i<mBoxes.size();i++)
-	{
-		mBoxes[i]->Yaw(SPIN_SPEED*Timer::GetDeltaTime());
-	}*/
 
 	PlayScene();
 
-	CheckCollisions();
-	
+	//CheckCollisions();
+	PlayerMovement();
+}
+
+void MyApp::PlayerMovement()
+{
 	Vector3 move = GetKeyboardMovement(KBMOVE_WSADRF);
-	Vector3 turn=GetKeyboardMovement(KBMOVE_CURSOR_HRP);
-	UpdateCamera();
+	Vector3 turn= GetKeyboardMovement(KBMOVE_CURSOR_HRP);
+	
+	if(mFreeCamera){
+		const float SPEED = 5.0f;
+
+		mCamera.Move(move*SPEED*Timer::GetDeltaTime());
+		mCamera.Turn(turn*SPEED*Timer::GetDeltaTime());
+	}
 }
 
 void MyApp::PlayScene()
@@ -362,100 +336,26 @@ void MyApp::PlayScene()
 
 	if(!pause)
 	{
-		if(timerC + Timer::GetDeltaTime() * playSpeed >= 0 && timerC + Timer::GetDeltaTime() * playSpeed <= 10)
+		if(timerC + Timer::GetDeltaTime() * playSpeed >= 0 && timerC + Timer::GetDeltaTime() * playSpeed <= 20)
 		{
+			for(int i = 0; i < mCrates.size(); i++)
+			{
+				float rotateAngle=XM_2PI * i / mCrates.size();
+				rotateAngle += rotateSpeed;
+				rotateSpeed += playSpeed * Timer::GetDeltaTime();
+
+				mCrates[i]->mPos.x = rotateRadius * sin(rotateAngle);
+				mCrates[i]->mPos.z = rotateRadius * cos(rotateAngle);
+			}
+			
 			timerC += Timer::GetDeltaTime() * playSpeed;
-
-			speed += playSpeed * Timer::GetDeltaTime();
-			for(int i = 0; i < mCrates.size(); i++)
-			{
-				
-				mCrates[i]->mPos=Vector3(0,0.7f,0);
-				float angle=XM_2PI * i / mCrates.size();
-				angle+=speed;
-				mCrates[i]->mPos.x = 3 * sin(angle);
-				mCrates[i]->mPos.z = 3 * cos(angle);
-
-			}
-
-			/*
-			for(int i = 0; i < mCrates.size(); i++)
-			{
-				if(sRotation)
-				{
-					if(mCrates[i]->mHpr.x <= 0 && mCrates[i]->mHpr.x <= XMConvertToRadians((i * -90) +45))
-					{
-						mCrates[i]->Yaw(XMConvertToRadians(rotateAngle) * Timer::GetDeltaTime() * playSpeed);
-					}
-					else if(timerC + Timer::GetDeltaTime() * playSpeed <= 3)
-					{
-						mCrates[i]->Move(Vector3(0, rotateHeight , rotateRadius) * Timer::GetDeltaTime() * playSpeed);
-						//mCrates[i]->Move(Vector3(rotateRadius, 0, 0) * Timer::GetDeltaTime() * playSpeed);
-						//mCrates[i]->Yaw(XMConvertToRadians(rotateAngle) * Timer::GetDeltaTime());
-					}
-				}
-				else if(sClump)
-				{
-
-				}
-				else
-				{
-
-				}
-			}
-
-			*/
 		}
 	}
-
-	//mTestCrate.Move(Vector3(1,1,0)*Timer::GetDeltaTime());
-	//mTestCrate.Pitch(XMConvertToRadians(30)*Timer::GetDeltaTime());
 }
 
 void MyApp::UpdateCamera()
 {
-	//mCamera.LookAt(mPlayer);
-	/*
-	Vector3 move = GetKeyboardMovement(KBMOVE_WSADRF);
-	Vector3 turn=GetKeyboardMovement(KBMOVE_CURSOR_HRP);
-	//mPlayer.mPos+=move*(MOVE_SPEED*Timer::GetDeltaTime());
-	mCamera.mHpr+=turn*(XMConvertToRadians(90)*Timer::GetDeltaTime());
-	mCamera.Move(move*(5*Timer::GetDeltaTime()));
 
-	POINT mouseMove = Input::GetMouseDelta();
-	
-	mCamera.mHpr.x += mouseMove.x *0.01;
-	mCamera.mHpr.y += mouseMove.y *0.01;
-	Input::SetMousePos(320,240,GetWindow()); 
-
-	*/
-	/*
-	mCamera.SetPos(mPlayer.GetPos()+mPlayer.RotateVector(Vector3(0.4f,0.9f,-1.3f)));
-	//mCamera.LookAt(mPlayer.GetPos()+mPlayer.RotateVector(Vector3(1.5,0,0)));
-	mCamera.mHpr = mPlayer.mHpr;
-	*/
-	/*
-	Vector3 tgt = mPlayer.GetPos()+mPlayer.RotateVector(Vector3(0,2,-5.0f));
-	tgt = Vector3::Lerp(mCamera.GetPos(),tgt,5.0f*Timer::GetDeltaTime());
-
-	mCamera.SetPos(tgt);
-	mCamera.LookAt(mPlayer);
-	*/
-
-	if(mNodeCamera){
-		const float SPEED = 3.0f;
-		Vector3 move(0,0,0);
-
-		float moveDir = 0;
-		if(Input::KeyDown('A')) moveDir=1;
-		if(Input::KeyDown('D')) moveDir=-1;
-
-		if(Input::KeyDown('W')) move.z++;
-		if(Input::KeyDown('S')) move.z--;
-
-		mCamera.LookAt(Vector3(0,0,0));
-		mCamera.mPos+=move*SPEED*Timer::GetDeltaTime();
-	}
 }
 
 void MyApp::Shutdown()
